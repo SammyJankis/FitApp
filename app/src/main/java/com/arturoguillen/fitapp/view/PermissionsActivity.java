@@ -105,7 +105,7 @@ public abstract class PermissionsActivity extends AppCompatActivity {
 
     private void showRationaleDialog(final Runnable ok) {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle("FirApp");
+        adb.setTitle("FitApp");
         adb.setMessage("It is necessary that you accept these permissions to have fun with our app !!");
         adb.setIcon(android.R.drawable.ic_dialog_alert);
         adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
@@ -124,7 +124,7 @@ public abstract class PermissionsActivity extends AppCompatActivity {
 
     private void showGoToSettingsDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle("FirApp");
+        adb.setTitle("FitApp");
         adb.setMessage("You can change your permissions in Settings, but until then, we can't continue.");
         adb.setIcon(android.R.drawable.ic_dialog_alert);
         adb.setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
