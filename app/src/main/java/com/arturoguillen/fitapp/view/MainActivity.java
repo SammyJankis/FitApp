@@ -69,6 +69,7 @@ public class MainActivity extends InjectedActivity implements GoogleApiClient.Co
     private void buildFitnessClient() {
         if (googleApiClient != null && !googleApiClient.isConnectionCallbacksRegistered(this)) {
             googleApiClient.registerConnectionCallbacks(this);
+            googleApiClient.connect(GoogleApiClient.SIGN_IN_MODE_OPTIONAL);
         }
     }
 
