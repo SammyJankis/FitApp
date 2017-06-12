@@ -1,6 +1,6 @@
 package com.arturoguillen.fitapp.di.module;
 
-import android.app.Application;
+import android.content.Context;
 
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -21,16 +21,16 @@ import dagger.Provides;
 @Module
 public class GoogleApiModule {
 
-    private Application application;
+    private Context context;
 
-    public GoogleApiModule(Application application) {
-        this.application = application;
+    public GoogleApiModule(Context context) {
+        this.context = context;
     }
 
     @Provides
     @Singleton
-    GoogleApiClient providesGoogleApiClient(GoogleSignInOptions gso) {
-        return new GoogleApiClient.Builder(application)
+    GoogleApiClient providesGoogleApiClient(Context context, GoogleSignInOptions gso) {
+        return new GoogleApiClient.Builder(context)
                 .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
                 .addApi(Fitness.SENSORS_API)
                 .addApi(Fitness.RECORDING_API)
@@ -48,6 +48,11 @@ public class GoogleApiModule {
                         new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE),
                         new Scope(Scopes.FITNESS_LOCATION_READ))
                 .build();
+    }
+
+    @Provides
+    public Context providesContext() {
+        return context;
     }
 
 }
