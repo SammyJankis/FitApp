@@ -82,22 +82,22 @@ public class MainActivity extends InjectedActivity implements GoogleApiClient.Co
     }
 
     @Override
-    protected void onResume() {
-        super.onResume();
+    protected void onStart() {
+        super.onStart();
         buildFitnessClient();
     }
 
-   @Override
-    protected void onPause() {
-        super.onPause();
-       if (googleApiClient.isConnected())
-           googleApiClient.disconnect();
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (googleApiClient.isConnected())
+            googleApiClient.disconnect();
 
-       if (googleApiClient.isConnectionCallbacksRegistered(this))
-           googleApiClient.unregisterConnectionCallbacks(this);
+        if (googleApiClient.isConnectionCallbacksRegistered(this))
+            googleApiClient.unregisterConnectionCallbacks(this);
 
-       if (googleApiClient.isConnectionFailedListenerRegistered(this))
-           googleApiClient.unregisterConnectionFailedListener(this);
+        if (googleApiClient.isConnectionFailedListenerRegistered(this))
+            googleApiClient.unregisterConnectionFailedListener(this);
     }
 
     @Override
