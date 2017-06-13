@@ -21,6 +21,14 @@ public class Goal implements Serializable {
     @SerializedName("description")
     private String description;
 
+    @SerializedName("limit")
+    private int limit;
+
+    private static final String TYPE_STEP_COUNT_DELTA = "TYPE_STEP_COUNT_DELTA";
+    private static final String TYPE_DISTANCE_DELTA = "TYPE_DISTANCE_DELTA";
+
+    @SerializedName("type")
+    private String dataType;
 
     public String getTitle() {
         return title;
@@ -28,5 +36,25 @@ public class Goal implements Serializable {
 
     public String getDescription() {
         return description;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public String getDataType() {
+        return dataType;
+    }
+
+    public boolean isDataTypeStep() {
+        return getDataType().equals(TYPE_STEP_COUNT_DELTA);
+    }
+
+    public boolean isDataTypeDistance() {
+        return getDataType().equals(TYPE_DISTANCE_DELTA);
     }
 }

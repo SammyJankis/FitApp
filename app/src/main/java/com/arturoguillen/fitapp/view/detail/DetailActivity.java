@@ -150,10 +150,9 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     private void dispatchGoal() {
-        //TODO: Select the goal
-        if (true) {
+        if (goal.isDataTypeDistance()) {
             presenter.queryDistanceData();
-        } else {
+        } else if (goal.isDataTypeStep()) {
             presenter.queryStepData();
         }
     }
