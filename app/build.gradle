@@ -17,13 +17,26 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
+
+    //Support
+    compile 'com.android.support:appcompat-v7:25.3.1'
+
+    //GooglePlay Services
+    compile "com.google.android.gms:play-services-auth:10.2.6"
+    compile 'com.google.android.gms:play-services-fitness:10.2.6'
+
+    //Dagger2
+    compile "com.google.dagger:dagger:2.9"
+    annotationProcessor "com.google.dagger:dagger-compiler:2.9"
+    provided 'javax.annotation:jsr250-api:1.0'
+
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile 'com.android.support:appcompat-v7:25.3.1'
     testCompile 'junit:junit:4.12'
 }
