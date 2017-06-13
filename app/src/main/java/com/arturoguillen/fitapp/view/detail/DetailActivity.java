@@ -1,4 +1,4 @@
-package com.arturoguillen.fitapp.view;
+package com.arturoguillen.fitapp.view.detail;
 
 import android.Manifest;
 import android.content.DialogInterface;
@@ -11,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import com.arturoguillen.fitapp.R;
 import com.arturoguillen.fitapp.di.FitComponent;
 import com.arturoguillen.fitapp.utils.LogUtils;
+import com.arturoguillen.fitapp.view.InjectedActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 

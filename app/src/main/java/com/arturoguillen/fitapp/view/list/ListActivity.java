@@ -1,4 +1,4 @@
-package com.arturoguillen.fitapp.view;
+package com.arturoguillen.fitapp.view.list;
 
 import android.support.v7.app.AppCompatActivity;
 

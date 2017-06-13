@@ -1,7 +1,7 @@
 package com.arturoguillen.fitapp.di;
 
 import com.arturoguillen.fitapp.di.module.GoogleApiModule;
-import com.arturoguillen.fitapp.view.DetailActivity;
+import com.arturoguillen.fitapp.view.detail.DetailActivity;
 
 import javax.inject.Singleton;
 
