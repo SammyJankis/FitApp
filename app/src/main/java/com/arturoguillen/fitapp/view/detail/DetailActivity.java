@@ -1,6 +1,7 @@
 package com.arturoguillen.fitapp.view.detail;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 
 import com.arturoguillen.fitapp.R;
 import com.arturoguillen.fitapp.di.component.FitComponent;
+import com.arturoguillen.fitapp.entities.Goal;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.PermissionsActivity;
 import com.google.android.gms.common.ConnectionResult;
@@ -28,6 +30,7 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
 
     public static final String TAG = DetailActivity.class.getSimpleName();
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
+    private static final String EXTRA_GOAL = "EXTRA_GOAL";
 
     @Inject
     GoogleApiClient googleApiClient;
@@ -152,4 +155,11 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         });
         adb.show();
     }
+
+    public static Intent createIntent(Context context, Goal goal) {
+        Intent intent = new Intent(context, DetailActivity.class);
+        intent.putExtra(EXTRA_GOAL, goal);
+        return intent;
+    }
+
 }
