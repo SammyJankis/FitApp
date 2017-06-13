@@ -31,7 +31,6 @@ public class DetailActivity extends InjectedActivity implements GoogleApiClient.
     @Inject
     GoogleApiClient googleApiClient;
 
-
     @Override
     public String getTag() {
         return TAG;
