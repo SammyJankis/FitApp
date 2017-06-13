@@ -56,7 +56,7 @@ public class GoalsPresenter implements PresenterInterface<GoalListView> {
                     @Override
                     public void onError(Throwable e) {
                         view.hideProgressFooter();
-                        view.showMessage(R.string.try_again);
+                        view.showMessage(R.string.click_try_again);
                         LogUtils.DEBUG(TAG, e.getMessage());
                     }
 

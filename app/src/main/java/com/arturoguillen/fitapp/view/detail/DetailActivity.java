@@ -140,15 +140,15 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
 
     private void showErrorDialog(final Runnable ok) {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle("FitApp");
-        adb.setMessage("You should accept all the pemissions to use the app");
+        adb.setTitle(getString(R.string.app_name));
+        adb.setMessage(R.string.should_accept_permissions);
         adb.setIcon(android.R.drawable.ic_dialog_alert);
-        adb.setPositiveButton("Try Again", new DialogInterface.OnClickListener() {
+        adb.setPositiveButton(R.string.try_again, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ok.run();
             }
         });
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        adb.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
