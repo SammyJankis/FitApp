@@ -1,7 +1,7 @@
 package com.arturoguillen.fitapp.di;
 
 import com.arturoguillen.fitapp.di.module.GoogleApiModule;
-import com.arturoguillen.fitapp.view.MainActivity;
+import com.arturoguillen.fitapp.view.DetailActivity;
 
 import javax.inject.Singleton;
 
@@ -14,5 +14,5 @@ import dagger.Component;
 @Singleton
 @Component(modules = {GoogleApiModule.class})
 public interface FitComponent {
-    void inject(MainActivity mainActivity);
+    void inject(DetailActivity detailActivity);
 }

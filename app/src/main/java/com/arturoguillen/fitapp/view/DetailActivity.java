@@ -23,9 +23,9 @@ import javax.inject.Inject;
  * Created by agl on 11/06/2017.
  */
 
-public class MainActivity extends InjectedActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class DetailActivity extends InjectedActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String TAG = "MainActivity";
+    public static final String TAG = DetailActivity.class.getSimpleName();
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
 
     @Inject
@@ -58,7 +58,7 @@ public class MainActivity extends InjectedActivity implements GoogleApiClient.Co
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_detail);
     }
 
     @Override
