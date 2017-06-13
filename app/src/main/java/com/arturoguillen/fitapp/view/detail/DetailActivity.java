@@ -105,6 +105,7 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         LogUtils.DEBUG(TAG, "Connected");
+        subscribe();
     }
 
     @Override
