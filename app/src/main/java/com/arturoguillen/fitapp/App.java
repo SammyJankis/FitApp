@@ -2,10 +2,10 @@ package com.arturoguillen.fitapp;
 
 import android.app.Application;
 
-import com.arturoguillen.fitapp.di.DaggerFitComponent;
+import com.arturoguillen.fitapp.di.component.DaggerFitComponent;
 import com.arturoguillen.fitapp.di.component.FitComponent;
+import com.arturoguillen.fitapp.di.module.GoalsModule;
 import com.arturoguillen.fitapp.di.module.GoogleApiModule;
-import com.arturoguillen.fitapp.di.module.NetModule;
 
 /**
  * Created by arturo.guillen on 13/06/2017.
@@ -24,7 +24,7 @@ public class App extends Application {
     protected FitComponent createComponent() {
         return DaggerFitComponent.builder()
                 .googleApiModule(new GoogleApiModule(this))
-                .netModule(new NetModule())
+                .goalsModule(new GoalsModule())
                 .build();
 
     }
