@@ -1,12 +1,10 @@
 package com.arturoguillen.fitapp.presenter;
 
 import com.arturoguillen.fitapp.R;
-import com.arturoguillen.fitapp.entities.Goal;
+import com.arturoguillen.fitapp.entities.GoalsWrapper;
 import com.arturoguillen.fitapp.model.GoalsModel;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.list.GoalListView;
-
-import java.util.List;
 
 import javax.inject.Inject;
 
@@ -44,12 +42,12 @@ public class GoalsPresenter implements PresenterInterface<GoalListView> {
         view.showProgressFooter();
         getGoalsDisposable = goalsModel.
                 getGoalsObservable().
-                subscribeWith(new DisposableObserver<List<Goal>>() {
+                subscribeWith(new DisposableObserver<GoalsWrapper>() {
                     @Override
-                    public void onNext(List<Goal> goalList) {
+                    public void onNext(GoalsWrapper goals) {
                         view.hideProgressFooter();
                         view.hideMessage();
-                        view.showMoreData(goalList);
+                        view.showMoreData(goals.getGoals());
                     }
 
                     @Override

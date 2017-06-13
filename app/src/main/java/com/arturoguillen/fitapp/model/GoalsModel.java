@@ -1,9 +1,7 @@
 package com.arturoguillen.fitapp.model;
 
 import com.arturoguillen.fitapp.di.api.GoalsApi;
-import com.arturoguillen.fitapp.entities.Goal;
-
-import java.util.List;
+import com.arturoguillen.fitapp.entities.GoalsWrapper;
 
 import javax.inject.Inject;
 
@@ -20,7 +18,7 @@ public class GoalsModel {
     @Inject
     public GoalsApi goalsApi;
 
-    public Observable<List<Goal>> getGoalsObservable() {
+    public Observable<GoalsWrapper> getGoalsObservable() {
 
         return goalsApi.getGoals().
                 subscribeOn(Schedulers.io()).

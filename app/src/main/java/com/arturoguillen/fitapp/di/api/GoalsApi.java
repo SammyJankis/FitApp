@@ -1,8 +1,6 @@
 package com.arturoguillen.fitapp.di.api;
 
-import com.arturoguillen.fitapp.entities.Goal;
-
-import java.util.List;
+import com.arturoguillen.fitapp.entities.GoalsWrapper;
 
 import io.reactivex.Observable;
 import retrofit2.http.GET;
@@ -14,6 +12,6 @@ import retrofit2.http.GET;
 public interface GoalsApi {
 
     @GET("v2/593fe033100000be0acd115c")
-    Observable<List<Goal>> getGoals();
+    Observable<GoalsWrapper> getGoals();
 
 }

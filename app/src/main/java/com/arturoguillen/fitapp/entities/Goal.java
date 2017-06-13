@@ -17,4 +17,16 @@ public class Goal implements Serializable {
 
     @SerializedName("title")
     private String title;
+
+    @SerializedName("description")
+    private String description;
+
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
 }
