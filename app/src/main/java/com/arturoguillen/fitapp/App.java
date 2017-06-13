@@ -3,7 +3,7 @@ package com.arturoguillen.fitapp;
 import android.app.Application;
 
 import com.arturoguillen.fitapp.di.DaggerFitComponent;
-import com.arturoguillen.fitapp.di.FitComponent;
+import com.arturoguillen.fitapp.di.component.FitComponent;
 import com.arturoguillen.fitapp.di.module.GoogleApiModule;
 import com.arturoguillen.fitapp.di.module.NetModule;
 

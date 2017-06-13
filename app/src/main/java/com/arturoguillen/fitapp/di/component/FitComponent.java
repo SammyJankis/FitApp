@@ -1,4 +1,4 @@
-package com.arturoguillen.fitapp.di;
+package com.arturoguillen.fitapp.di.component;
 
 import com.arturoguillen.fitapp.di.module.GoogleApiModule;
 import com.arturoguillen.fitapp.di.module.NetModule;

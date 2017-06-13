@@ -3,7 +3,7 @@ package com.arturoguillen.fitapp.view.list;
 import android.os.Bundle;
 
 import com.arturoguillen.fitapp.R;
-import com.arturoguillen.fitapp.di.FitComponent;
+import com.arturoguillen.fitapp.di.component.FitComponent;
 import com.arturoguillen.fitapp.view.InjectedActivity;
 
 /**

@@ -9,7 +9,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 
 import com.arturoguillen.fitapp.R;
-import com.arturoguillen.fitapp.di.FitComponent;
+import com.arturoguillen.fitapp.di.component.FitComponent;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.PermissionsActivity;
 import com.google.android.gms.common.ConnectionResult;
