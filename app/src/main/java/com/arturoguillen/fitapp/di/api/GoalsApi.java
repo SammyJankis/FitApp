@@ -11,7 +11,7 @@ import retrofit2.http.GET;
 
 public interface GoalsApi {
 
-    @GET("v2/593fe033100000be0acd115c")
+    @GET("/v2/594024941000005111cd1234")
     Observable<GoalsWrapper> getGoals();
 
 }

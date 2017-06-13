@@ -5,5 +5,5 @@ package com.arturoguillen.fitapp;
  */
 
 public class Constants {
-    public static final String BASE_URL = "";
+    public static final String BASE_URL = "http://www.mocky.io";
 }
