@@ -55,19 +55,13 @@ public class ListActivity extends InjectedActivity implements GoalListView, List
 
         ButterKnife.bind(this);
         setupRecyclerView();
-
+        retrieveData();
     }
 
     @Override
     protected void onDestroy() {
         presenter.detachView();
         super.onDestroy();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        retrieveData();
     }
 
     private void retrieveData() {
