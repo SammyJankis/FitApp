@@ -13,11 +13,6 @@ import com.arturoguillen.fitapp.di.FitComponent;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.common.api.PendingResult;
-import com.google.android.gms.fitness.Fitness;
-import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.request.GoalsReadRequest;
-import com.google.android.gms.fitness.result.GoalsResult;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,6 +30,7 @@ public class MainActivity extends InjectedActivity implements GoogleApiClient.Co
 
     @Inject
     GoogleApiClient googleApiClient;
+
 
     @Override
     public String getTag() {
@@ -106,7 +102,6 @@ public class MainActivity extends InjectedActivity implements GoogleApiClient.Co
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         LogUtils.DEBUG(TAG, "Connected");
-        subscribe();
     }
 
     @Override
@@ -133,57 +128,11 @@ public class MainActivity extends InjectedActivity implements GoogleApiClient.Co
                     showErrorDialog(new Runnable() {
                         @Override
                         public void run() {
-                            subscribe();
                         }
                     });
                 }
             }
         }
-    }
-
-    public void subscribe() {
-        PendingResult<GoalsResult> pendingResult =
-                Fitness.GoalsApi.readCurrentGoals(
-                        googleApiClient,
-                        new GoalsReadRequest.Builder()
-                                .addDataType(DataType.TYPE_STEP_COUNT_DELTA)
-                                .addDataType(DataType.TYPE_DISTANCE_DELTA)
-                                .build());
-
-        //GoalsResult readDataResult = pendingResult.await();
-        //List<Goal> goals = readDataResult.getGoals();
-
-
-      /*  Fitness.RecordingApi
-                .subscribe(googleApiClient, DataType.TYPE_STEP_COUNT_CUMULATIVE)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-
-                        if (status.isSuccess()) {
-                            if (status.getStatusCode()
-                                    == FitnessStatusCodes.SUCCESS_ALREADY_SUBSCRIBED) {
-                                Log.i(TAG, "Existing subscription for activity detected.");
-                            } else {
-                                Log.i(TAG, "Successfully subscribed!");
-                            }
-                            readData();
-                        } else {
-                            Log.w(TAG, "There was a problem subscribing.");
-                            if (status.hasResolution()) {
-                                try {
-                                    status.startResolutionForResult(MainActivity.this, REQUEST_CODE_RESOLVE_ERR);
-                                } catch (IntentSender.SendIntentException e) {
-                                    e.printStackTrace();
-                                }
-                            }
-                        }
-                    }
-                });*/
-    }
-
-    private void readData() {
-
     }
 
     private void showErrorDialog(final Runnable ok) {
