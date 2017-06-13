@@ -8,12 +8,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataType;
-import com.google.android.gms.fitness.request.DataReadRequest;
-import com.google.android.gms.fitness.result.DataReadResult;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import com.google.android.gms.fitness.result.DailyTotalResult;
 
 import javax.inject.Inject;
 
@@ -22,8 +17,6 @@ import javax.inject.Inject;
  */
 
 public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
-
-    private static final String TAG = DetailFitPresenter.class.getSimpleName();
 
     private GoogleApiClient googleApiClient;
 
@@ -34,15 +27,22 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
         this.googleApiClient = googleApiClient;
     }
 
-    public void queryData() {
-        Fitness.HistoryApi.
-                readData(googleApiClient, queryFitnessStepPastWeekData()).setResultCallback(
-                new ResultCallback<DataReadResult>() {
+    public void queryStepData() {
+        queryFitnessDataForToday(DataType.TYPE_STEP_COUNT_DELTA);
+    }
+
+    public void queryDistanceData() {
+        queryFitnessDataForToday(DataType.TYPE_DISTANCE_DELTA);
+    }
+
+    private void queryFitnessDataForToday(DataType dataType) {
+        Fitness.HistoryApi.readDailyTotal(googleApiClient, dataType).setResultCallback(
+                new ResultCallback<DailyTotalResult>() {
                     @Override
-                    public void onResult(@NonNull DataReadResult dataReadResult) {
-                        Status status = dataReadResult.getStatus();
+                    public void onResult(@NonNull DailyTotalResult dailyTotalResult) {
+                        Status status = dailyTotalResult.getStatus();
                         if (status.isSuccess()) {
-                            view.showData(dataReadResult);
+                            view.showData(dailyTotalResult);
                         } else {
                             view.requestPermissions(status);
                         }
@@ -50,24 +50,6 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
                 }
         );
     }
-
-    private static DataReadRequest queryFitnessStepPastWeekData() {
-        Calendar cal = Calendar.getInstance();
-        Date now = new Date();
-        cal.setTime(now);
-        long endTime = cal.getTimeInMillis();
-        cal.add(Calendar.WEEK_OF_YEAR, -1);
-        long startTime = cal.getTimeInMillis();
-
-        DataReadRequest readRequest = new DataReadRequest.Builder()
-                .aggregate(DataType.TYPE_STEP_COUNT_DELTA, DataType.AGGREGATE_STEP_COUNT_DELTA)
-                .bucketByTime(1, TimeUnit.DAYS)
-                .setTimeRange(startTime, endTime, TimeUnit.MILLISECONDS)
-                .build();
-
-        return readRequest;
-    }
-
 
     @Override
     public void attachView(DetailGoalView view) {

@@ -9,7 +9,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import com.arturoguillen.fitapp.R;
 import com.arturoguillen.fitapp.di.component.FitComponent;
@@ -20,20 +19,17 @@ import com.arturoguillen.fitapp.view.PermissionsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.data.Bucket;
 import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.result.DataReadResult;
+import com.google.android.gms.fitness.result.DailyTotalResult;
 
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import javax.inject.Inject;
 
-import static java.text.DateFormat.getTimeInstance;
+import butterknife.ButterKnife;
 
 /**
  * Created by agl on 11/06/2017.
@@ -46,6 +42,8 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     private static final String TAG = DetailActivity.class.getSimpleName();
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
     private static final String EXTRA_GOAL = "EXTRA_GOAL";
+
+    private Goal goal;
 
     @Inject
     GoogleApiClient googleApiClient;
@@ -82,6 +80,23 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         presenter.attachView(this);
 
         setContentView(R.layout.activity_detail);
+        ButterKnife.bind(this);
+        goal = getGoalExtra(savedInstanceState);
+    }
+
+    private Goal getGoalExtra(Bundle savedInstanceState) {
+        Goal goal;
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if (extras == null) {
+                goal = null;
+            } else {
+                goal = (Goal) extras.get(EXTRA_GOAL);
+            }
+        } else {
+            goal = (Goal) savedInstanceState.get(EXTRA_GOAL);
+        }
+        return goal;
     }
 
     @Override
@@ -131,7 +146,16 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         LogUtils.DEBUG(TAG, "Connected");
-        presenter.queryData();
+        dispatchGoal();
+    }
+
+    private void dispatchGoal() {
+        //TODO: Select the goal
+        if (true) {
+            presenter.queryDistanceData();
+        } else {
+            presenter.queryStepData();
+        }
     }
 
     @Override
@@ -158,7 +182,7 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
                     showErrorDialog(new Runnable() {
                         @Override
                         public void run() {
-                            presenter.queryData();
+                            dispatchGoal();
                         }
                     });
                 }
@@ -190,44 +214,22 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         return intent;
     }
 
-    public static void printData(DataReadResult dataReadResult) {
-        if (dataReadResult.getBuckets().size() > 0) {
-            LogUtils.DEBUG(TAG, "Number of returned buckets of DataSets is: "
-                    + dataReadResult.getBuckets().size());
-            for (Bucket bucket : dataReadResult.getBuckets()) {
-                List<DataSet> dataSets = bucket.getDataSets();
-                for (DataSet dataSet : dataSets) {
-                    dumpDataSet(dataSet);
-                }
-            }
-        } else if (dataReadResult.getDataSets().size() > 0) {
-            LogUtils.DEBUG(TAG, "Number of returned DataSets is: "
-                    + dataReadResult.getDataSets().size());
-            for (DataSet dataSet : dataReadResult.getDataSets()) {
-                dumpDataSet(dataSet);
-            }
-        }
-    }
-
-    private static void dumpDataSet(DataSet dataSet) {
-        LogUtils.DEBUG(TAG, "Data returned for Data type: " + dataSet.getDataType().getName());
-        DateFormat dateFormat = getTimeInstance();
-
-        for (DataPoint dp : dataSet.getDataPoints()) {
-            LogUtils.DEBUG(TAG, "Data point:");
-            LogUtils.DEBUG(TAG, "\tType: " + dp.getDataType().getName());
-            LogUtils.DEBUG(TAG, "\tStart: " + dateFormat.format(dp.getStartTime(TimeUnit.MILLISECONDS)));
-            LogUtils.DEBUG(TAG, "\tEnd: " + dateFormat.format(dp.getEndTime(TimeUnit.MILLISECONDS)));
-            for (Field field : dp.getDataType().getFields()) {
-                LogUtils.DEBUG(TAG, "\tField: " + field.getName() +
-                        " Value: " + dp.getValue(field));
-            }
-        }
-    }
-
     @Override
-    public void showData(DataReadResult dataResult) {
-        printData(dataResult);
+    public void showData(DailyTotalResult dailyTotalResult) {
+        //TODO : Set the value to the view
+        int totalValue = getDatasetValue(dailyTotalResult.getTotal());
+
+    }
+
+    private int getDatasetValue(DataSet dataSet) {
+        int count = 0;
+        for (DataPoint dp : dataSet.getDataPoints()) {
+            for (Field field : dp.getDataType().getFields()) {
+                LogUtils.DEBUG(TAG, "\tField: " + field.getName() + " Value: " + dp.getValue(field));
+                count += dp.getValue(field).asInt();
+            }
+        }
+        return count;
     }
 
     @Override
