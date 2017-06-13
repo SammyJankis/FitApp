@@ -12,6 +12,7 @@ import com.arturoguillen.fitapp.R;
 import com.arturoguillen.fitapp.di.FitComponent;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.InjectedActivity;
+import com.arturoguillen.fitapp.view.PermissionsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -24,7 +25,7 @@ import javax.inject.Inject;
  * Created by agl on 11/06/2017.
  */
 
-public class DetailActivity extends InjectedActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class DetailActivity extends PermissionsActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     public static final String TAG = DetailActivity.class.getSimpleName();
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;

@@ -10,7 +10,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import com.arturoguillen.fitapp.BuildConfig;
@@ -22,7 +21,7 @@ import java.util.List;
  * Created by agl on 12/06/2017.
  */
 
-public abstract class PermissionsActivity extends AppCompatActivity {
+public abstract class PermissionsActivity extends InjectedActivity {
 
     private static final int REQUEST_PERMISSIONS_REQUEST_CODE = 34;
 
