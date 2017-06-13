@@ -1,6 +1,7 @@
-package com.arturoguillen.fitapp.view;
+package com.arturoguillen.fitapp.view.detail;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,8 +10,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 
 import com.arturoguillen.fitapp.R;
-import com.arturoguillen.fitapp.di.FitComponent;
+import com.arturoguillen.fitapp.di.component.FitComponent;
+import com.arturoguillen.fitapp.entities.Goal;
 import com.arturoguillen.fitapp.utils.LogUtils;
+import com.arturoguillen.fitapp.view.PermissionsActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 
@@ -23,14 +26,14 @@ import javax.inject.Inject;
  * Created by agl on 11/06/2017.
  */
 
-public class MainActivity extends InjectedActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
+public class DetailActivity extends PermissionsActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String TAG = "MainActivity";
+    public static final String TAG = DetailActivity.class.getSimpleName();
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
+    private static final String EXTRA_GOAL = "EXTRA_GOAL";
 
     @Inject
     GoogleApiClient googleApiClient;
-
 
     @Override
     public String getTag() {
@@ -58,7 +61,7 @@ public class MainActivity extends InjectedActivity implements GoogleApiClient.Co
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_detail);
     }
 
     @Override
@@ -152,4 +155,11 @@ public class MainActivity extends InjectedActivity implements GoogleApiClient.Co
         });
         adb.show();
     }
+
+    public static Intent createIntent(Context context, Goal goal) {
+        Intent intent = new Intent(context, DetailActivity.class);
+        intent.putExtra(EXTRA_GOAL, goal);
+        return intent;
+    }
+
 }

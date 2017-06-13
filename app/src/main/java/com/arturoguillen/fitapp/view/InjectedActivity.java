@@ -1,34 +1,23 @@
 package com.arturoguillen.fitapp.view;
 
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 
-import com.arturoguillen.fitapp.di.DaggerFitComponent;
-import com.arturoguillen.fitapp.di.FitComponent;
-import com.arturoguillen.fitapp.di.module.GoogleApiModule;
+import com.arturoguillen.fitapp.App;
+import com.arturoguillen.fitapp.di.component.FitComponent;
 
 /**
  * Created by agl on 12/06/2017.
  */
 
-public abstract class InjectedActivity extends PermissionsActivity {
+public abstract class InjectedActivity extends AppCompatActivity {
 
-    private FitComponent component;
-
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (component == null) {
-            component = createComponent();
-        }
-        injectComponent(component);
+        injectComponent(((App) getApplication())
+                .getComponent());
     }
 
     protected abstract void injectComponent(FitComponent component);
-
-
-    protected FitComponent createComponent() {
-
-        return DaggerFitComponent.builder()
-                .googleApiModule(new GoogleApiModule(this))
-                .build();
-    }
 }
