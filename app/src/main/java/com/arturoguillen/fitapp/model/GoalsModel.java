@@ -7,6 +7,8 @@ import javax.inject.Inject;
 
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.observers.DisposableObserver;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -14,14 +16,19 @@ import io.reactivex.schedulers.Schedulers;
  */
 
 public class GoalsModel {
+    private GoalsApi goalsApi;
 
     @Inject
-    public GoalsApi goalsApi;
+    public GoalsModel(GoalsApi goalsApi) {
+        this.goalsApi = goalsApi;
+    }
 
-    public Observable<GoalsWrapper> getGoalsObservable() {
+    public Disposable getGoalsObservable(DisposableObserver<GoalsWrapper> observer) {
 
-        return goalsApi.getGoals().
+        Observable<GoalsWrapper> observable = goalsApi.getGoals();
+        return observable.
                 subscribeOn(Schedulers.io()).
-                observeOn(AndroidSchedulers.mainThread());
+                observeOn(AndroidSchedulers.mainThread()).
+                subscribeWith(observer);
     }
 }

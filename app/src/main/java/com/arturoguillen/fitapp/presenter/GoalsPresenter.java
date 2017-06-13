@@ -23,8 +23,12 @@ public class GoalsPresenter implements PresenterInterface<GoalListView> {
 
     private Disposable getGoalsDisposable;
 
+    private GoalsModel goalsModel;
+
     @Inject
-    public GoalsModel goalsModel;
+    public GoalsPresenter(GoalsModel goalsModel) {
+        this.goalsModel = goalsModel;
+    }
 
     @Override
     public void attachView(GoalListView view) {
@@ -41,8 +45,7 @@ public class GoalsPresenter implements PresenterInterface<GoalListView> {
     public void getGoalsList() {
         view.showProgressFooter();
         getGoalsDisposable = goalsModel.
-                getGoalsObservable().
-                subscribeWith(new DisposableObserver<GoalsWrapper>() {
+                getGoalsObservable(new DisposableObserver<GoalsWrapper>() {
                     @Override
                     public void onNext(GoalsWrapper goals) {
                         view.hideProgressFooter();

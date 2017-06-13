@@ -15,6 +15,7 @@ import com.arturoguillen.fitapp.entities.Goal;
 import com.arturoguillen.fitapp.presenter.GoalsPresenter;
 import com.arturoguillen.fitapp.view.InjectedActivity;
 import com.arturoguillen.fitapp.view.detail.DetailActivity;
+import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.List;
 
@@ -32,6 +33,9 @@ public class ListActivity extends InjectedActivity implements GoalListView, List
 
     @Inject
     GoalsPresenter presenter;
+
+    @Inject
+    GoogleApiClient googleApiClient;
 
     @BindView(R.id.recyclerview_list)
     RecyclerView recyclerView;
