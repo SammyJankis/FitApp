@@ -31,7 +31,7 @@ public class GoogleApiModule {
     @Singleton
     GoogleApiClient providesGoogleGoalsApiClient(GoogleApiClient.Builder builder) {
         return builder
-                .addApi(Fitness.GOALS_API)
+                .addApi(Fitness.HISTORY_API)
                 .build();
     }
 

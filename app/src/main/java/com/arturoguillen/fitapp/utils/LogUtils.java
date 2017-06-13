@@ -1,7 +1,8 @@
 package com.arturoguillen.fitapp.utils;
 
-import android.support.compat.BuildConfig;
 import android.util.Log;
+
+import com.arturoguillen.fitapp.BuildConfig;
 
 /**
  * Created by arturo.guillen on 13/06/2017.

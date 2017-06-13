@@ -1,4 +1,11 @@
 <resources>
     <string name="app_name">FitApp</string>
-    <string name="try_again">Click here to try again</string>
+    <string name="click_try_again">Click here to try again</string>
+    <string name="try_again">Try again</string>
+    <string name="should_accept_permissions">You should accept all the pemissions to use the app</string>
+    <string name="cancel">Cancel</string>
+    <string name="neccesary_accept_permissions">It is necessary that you accept these permissions to have fun with our app !!</string>
+    <string name="ok">Ok</string>
+    <string name="change_permissions_in_settings">You can change your permissions in Settings, but until then, we can\'t continue</string>
+    <string name="go_to_settings">Go to Settings</string>
 </resources>

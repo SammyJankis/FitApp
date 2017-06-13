@@ -10,9 +10,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 
 import com.arturoguillen.fitapp.BuildConfig;
+import com.arturoguillen.fitapp.R;
+import com.arturoguillen.fitapp.utils.LogUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -104,16 +105,16 @@ public abstract class PermissionsActivity extends InjectedActivity {
 
     private void showRationaleDialog(final Runnable ok) {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle("FitApp");
-        adb.setMessage("It is necessary that you accept these permissions to have fun with our app !!");
+        adb.setTitle(getString(R.string.app_name));
+        adb.setMessage(getString(R.string.neccesary_accept_permissions));
         adb.setIcon(android.R.drawable.ic_dialog_alert);
-        adb.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+        adb.setPositiveButton(getString(R.string.ok), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 ok.run();
             }
         });
 
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        adb.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
@@ -123,10 +124,10 @@ public abstract class PermissionsActivity extends InjectedActivity {
 
     private void showGoToSettingsDialog() {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
-        adb.setTitle("FitApp");
-        adb.setMessage("You can change your permissions in Settings, but until then, we can't continue.");
+        adb.setTitle(getString(R.string.app_name));
+        adb.setMessage(getString(R.string.change_permissions_in_settings));
         adb.setIcon(android.R.drawable.ic_dialog_alert);
-        adb.setPositiveButton("Go to Settings", new DialogInterface.OnClickListener() {
+        adb.setPositiveButton(getString(R.string.go_to_settings), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 Intent intent = new Intent();
                 intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
@@ -138,7 +139,7 @@ public abstract class PermissionsActivity extends InjectedActivity {
             }
         });
 
-        adb.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        adb.setNegativeButton(getString(R.string.cancel), new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
             }
@@ -151,7 +152,7 @@ public abstract class PermissionsActivity extends InjectedActivity {
                                            @NonNull int[] grantResults) {
         if (requestCode == REQUEST_PERMISSIONS_REQUEST_CODE) {
             if (grantResults.length <= 0) {
-                Log.i(getTag(), "User interaction was cancelled.");
+                LogUtils.DEBUG(getTag(), "User interaction was cancelled");
             } else if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 getCallbackOnPermissionsGranted().run();
             } else {
