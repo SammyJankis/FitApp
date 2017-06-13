@@ -29,14 +29,17 @@ public class GoogleApiModule {
 
     @Provides
     @Singleton
-    GoogleApiClient providesGoogleApiClient(Context context, GoogleSignInOptions gso) {
-        return new GoogleApiClient.Builder(context)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .addApi(Fitness.SENSORS_API)
-                .addApi(Fitness.RECORDING_API)
-                .addApi(Fitness.HISTORY_API)
-                .addScope(new Scope(Scopes.FITNESS_LOCATION_READ))
+    GoogleApiClient providesGoogleGoalsApiClient(GoogleApiClient.Builder builder) {
+        return builder
+                .addApi(Fitness.GOALS_API)
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    GoogleApiClient.Builder providesGoogleApiClientBuilder(Context context, GoogleSignInOptions gso) {
+        return new GoogleApiClient.Builder(context)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso);
     }
 
     @Provides
