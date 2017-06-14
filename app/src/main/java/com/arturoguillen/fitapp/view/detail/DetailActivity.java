@@ -229,21 +229,13 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     @Override
-    public void showData(DailyTotalResult dailyTotalResult) {
-        //TODO : Set the value to the view
-        int totalValue = getDatasetValue(dailyTotalResult.getTotal());
-
-    }
-
-    private int getDatasetValue(DataSet dataSet) {
-        int count = 0;
-        for (DataPoint dp : dataSet.getDataPoints()) {
-            for (Field field : dp.getDataType().getFields()) {
-                LogUtils.DEBUG(TAG, "\tField: " + field.getName() + " Value: " + dp.getValue(field));
-                count += dp.getValue(field).asInt();
-            }
-        }
-        return count;
+    public void showData(DailyTotalResult dailyTotalResult, Field field) {
+        DataSet totalSet = dailyTotalResult.getTotal();
+        int totalValue = totalSet.isEmpty() ?
+                0 : totalSet.getDataPoints().get(0).getValue(field).asInt();
+        LogUtils.DEBUG(TAG, "Total value = " + totalValue);
+        progressDetail.setMax(goal.getLimit());
+        progressDetail.setProgress(totalValue);
     }
 
     @Override

@@ -8,6 +8,7 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
 import com.google.android.gms.fitness.data.DataType;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 
 import javax.inject.Inject;
@@ -28,14 +29,14 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
     }
 
     public void queryStepData() {
-        queryFitnessDataForToday(DataType.TYPE_STEP_COUNT_DELTA);
+        queryFitnessDataForToday(DataType.TYPE_STEP_COUNT_DELTA, Field.FIELD_STEPS);
     }
 
     public void queryDistanceData() {
-        queryFitnessDataForToday(DataType.TYPE_DISTANCE_DELTA);
+        queryFitnessDataForToday(DataType.TYPE_DISTANCE_DELTA, Field.FIELD_DISTANCE);
     }
 
-    private void queryFitnessDataForToday(DataType dataType) {
+    private void queryFitnessDataForToday(DataType dataType, final Field field) {
         subscribeToFitnessData(dataType);
         Fitness.HistoryApi.readDailyTotal(googleApiClient, dataType).setResultCallback(
                 new ResultCallback<DailyTotalResult>() {
@@ -43,7 +44,7 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
                     public void onResult(@NonNull DailyTotalResult dailyTotalResult) {
                         Status status = dailyTotalResult.getStatus();
                         if (status.isSuccess()) {
-                            view.showData(dailyTotalResult);
+                            view.showData(dailyTotalResult, field);
                         } else {
                             view.requestPermissions(status);
                         }

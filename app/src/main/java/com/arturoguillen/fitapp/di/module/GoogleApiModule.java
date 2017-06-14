@@ -32,6 +32,7 @@ public class GoogleApiModule {
     GoogleApiClient providesGoogleGoalsApiClient(GoogleApiClient.Builder builder) {
         return builder
                 .addApi(Fitness.HISTORY_API)
+                .addApi(Fitness.RECORDING_API)
                 .build();
     }
 
