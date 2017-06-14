@@ -50,7 +50,7 @@ public class GoogleApiModule {
                 .requestEmail()
                 .requestScopes(
                         new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE),
-                        new Scope(Scopes.FITNESS_LOCATION_READ))
+                        new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
                 .build();
     }
 
