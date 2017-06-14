@@ -32,6 +32,7 @@ public class GoogleApiModule {
     GoogleApiClient providesGoogleGoalsApiClient(GoogleApiClient.Builder builder) {
         return builder
                 .addApi(Fitness.HISTORY_API)
+                .addApi(Fitness.RECORDING_API)
                 .build();
     }
 
@@ -49,7 +50,7 @@ public class GoogleApiModule {
                 .requestEmail()
                 .requestScopes(
                         new Scope(Scopes.FITNESS_ACTIVITY_READ_WRITE),
-                        new Scope(Scopes.FITNESS_LOCATION_READ))
+                        new Scope(Scopes.FITNESS_LOCATION_READ_WRITE))
                 .build();
     }
 

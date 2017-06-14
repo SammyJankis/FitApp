@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.arturoguillen.fitapp.R;
 import com.arturoguillen.fitapp.di.component.FitComponent;
@@ -17,11 +19,12 @@ import com.arturoguillen.fitapp.presenter.DetailFitPresenter;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.PermissionsActivity;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 
 import java.util.ArrayList;
@@ -29,6 +32,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -41,6 +45,7 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
 
     private static final String TAG = DetailActivity.class.getSimpleName();
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String EXTRA_GOAL = "EXTRA_GOAL";
 
     private Goal goal;
@@ -50,6 +55,21 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
 
     @Inject
     DetailFitPresenter presenter;
+
+    @BindView(R.id.progress_detail)
+    ProgressBar progressDetail;
+
+    @BindView(R.id.description_detail)
+    TextView descriptionDetail;
+
+    @BindView(R.id.title_detail)
+    TextView titleDetail;
+
+    @BindView(R.id.more_info_detail)
+    TextView moreInfoDetail;
+
+    @BindView(R.id.type_detail)
+    TextView typeDetail;
 
     @Override
     public String getTag() {
@@ -82,6 +102,20 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
         goal = getGoalExtra(savedInstanceState);
+
+        initUI();
+    }
+
+    private void initUI() {
+        titleDetail.setText(goal.getTitle());
+        descriptionDetail.setText(goal.getDescription());
+        typeDetail.setText(getTypeString());
+    }
+
+    private int getTypeString() {
+        if (goal.isDataTypeDistance())
+            return R.string.meters;
+        return R.string.steps;
     }
 
     private Goal getGoalExtra(Bundle savedInstanceState) {
@@ -117,7 +151,8 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     private void registerGoogleApiClientCallbacks() {
-        if (googleApiClient != null &&
+
+        if (checkPlayServices() && googleApiClient != null &&
                 !googleApiClient.isConnectionCallbacksRegistered(this) &&
                 !googleApiClient.isConnectionFailedListenerRegistered(this)) {
             googleApiClient.registerConnectionCallbacks(this);
@@ -150,10 +185,9 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     private void dispatchGoal() {
-        //TODO: Select the goal
-        if (true) {
+        if (goal.isDataTypeDistance()) {
             presenter.queryDistanceData();
-        } else {
+        } else if (goal.isDataTypeStep()) {
             presenter.queryStepData();
         }
     }
@@ -170,6 +204,18 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         LogUtils.DEBUG(TAG, "onConnectionFailed");
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(this);
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(this, result, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -215,21 +261,32 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     @Override
-    public void showData(DailyTotalResult dailyTotalResult) {
-        //TODO : Set the value to the view
-        int totalValue = getDatasetValue(dailyTotalResult.getTotal());
-
+    public void showData(DailyTotalResult dailyTotalResult, Field field) {
+        DataSet totalSet = dailyTotalResult.getTotal();
+        progressDetail.setMax(goal.getLimit());
+        Value totalValue = totalSet.isEmpty() ? null : totalSet.getDataPoints().get(0).getValue(field);
+        int total;
+        if (goal.isDataTypeStep()) {
+            total = totalValue.asInt();
+        } else {
+            total = (int) totalValue.asFloat();
+        }
+        LogUtils.DEBUG(TAG, "Total value = " + total);
+        progressDetail.setProgress(total);
+        showMoreInfo(total);
     }
 
-    private int getDatasetValue(DataSet dataSet) {
-        int count = 0;
-        for (DataPoint dp : dataSet.getDataPoints()) {
-            for (Field field : dp.getDataType().getFields()) {
-                LogUtils.DEBUG(TAG, "\tField: " + field.getName() + " Value: " + dp.getValue(field));
-                count += dp.getValue(field).asInt();
-            }
+    private void showMoreInfo(int total) {
+        int percent = 100 * total / goal.getLimit();
+        String text;
+        if (percent < 33) {
+            text = getString(R.string.come_on, total);
+        } else if (percent > 33 && percent < 66) {
+            text = getString(R.string.doing_great, total);
+        } else {
+            text = getString(R.string.keep_pushing, total);
         }
-        return count;
+        moreInfoDetail.setText(text);
     }
 
     @Override

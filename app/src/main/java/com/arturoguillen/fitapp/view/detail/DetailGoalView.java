@@ -1,6 +1,7 @@
 package com.arturoguillen.fitapp.view.detail;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 
 /**
@@ -8,7 +9,7 @@ import com.google.android.gms.fitness.result.DailyTotalResult;
  */
 
 public interface DetailGoalView {
-    void showData(DailyTotalResult dailyTotalResult);
+    void showData(DailyTotalResult dailyTotalResult, Field field);
 
     void requestPermissions(Status status);
 
