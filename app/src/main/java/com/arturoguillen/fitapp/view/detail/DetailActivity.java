@@ -24,6 +24,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 
 import java.util.ArrayList;
@@ -262,11 +263,16 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     @Override
     public void showData(DailyTotalResult dailyTotalResult, Field field) {
         DataSet totalSet = dailyTotalResult.getTotal();
-        int totalValue = totalSet.isEmpty() ?
-                0 : totalSet.getDataPoints().get(0).getValue(field).asInt();
-        LogUtils.DEBUG(TAG, "Total value = " + totalValue);
         progressDetail.setMax(goal.getLimit());
-        progressDetail.setProgress(totalValue);
+        Value totalValue = totalSet.isEmpty() ? null : totalSet.getDataPoints().get(0).getValue(field);
+        int total;
+        if (goal.isDataTypeStep()) {
+            total = totalValue.asInt();
+        } else {
+            total = (int) totalValue.asFloat();
+        }
+        LogUtils.DEBUG(TAG, "Total value = " + total);
+        progressDetail.setProgress(total);
     }
 
     @Override
