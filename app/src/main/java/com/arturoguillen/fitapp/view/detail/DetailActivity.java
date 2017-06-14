@@ -273,6 +273,20 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         }
         LogUtils.DEBUG(TAG, "Total value = " + total);
         progressDetail.setProgress(total);
+        showMoreInfo(total);
+    }
+
+    private void showMoreInfo(int total) {
+        int percent = 100 * total / goal.getLimit();
+        String text;
+        if (percent < 33) {
+            text = getString(R.string.come_on, total);
+        } else if (percent > 33 && percent < 66) {
+            text = getString(R.string.doing_great, total);
+        } else {
+            text = getString(R.string.keep_pushing, total);
+        }
+        moreInfoDetail.setText(text);
     }
 
     @Override

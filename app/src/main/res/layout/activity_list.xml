@@ -10,6 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_marginBottom="@dimen/padding_med"
         android:gravity="center"
         android:textSize="@dimen/text_size_medium"
         android:visibility="gone" />
@@ -19,15 +20,17 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/text_message_list"
+        android:layout_marginBottom="@dimen/padding_med"
+        android:layout_marginTop="@dimen/padding_med"
         android:orientation="vertical">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
+            android:padding="@dimen/padding_med"
             android:text="@string/hi_there"
             android:textSize="@dimen/text_size_high" />
-
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
@@ -38,7 +41,8 @@
         android:id="@+id/recyclerview_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/title_list" />
+        android:layout_below="@id/title_list"
+        android:layout_marginTop="@dimen/padding_med" />
 
     <ProgressBar
         android:id="@+id/progress_list"

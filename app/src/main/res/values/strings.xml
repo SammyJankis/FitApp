@@ -11,4 +11,8 @@
     <string name="hi_there">Hi there !!\nWelcome to FitApp, select one of our goals from this list to start having fun</string>
     <string name="meters">Meters</string>
     <string name="steps">Steps</string>
+    <string name="come_on">Come on, you have to focus. You\'ve only done %d</string>
+    <string name="doing_great">You are doing great. You\'ve done %d</string>
+    <string name="keep_pushing">Keep pushing. That\'s almost done. You\'ve done %d</string>
+
 </resources>
