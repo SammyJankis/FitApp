@@ -14,11 +14,34 @@
         android:textSize="@dimen/text_size_medium"
         android:visibility="gone" />
 
+    <LinearLayout
+        android:id="@+id/title_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/text_message_list"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:padding="@dimen/padding_low"
+            android:text="@string/hi_there"
+            android:textSize="@dimen/text_size_high" />
+
+        <View
+            android:id="@+id/separator"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/black"
+            android:padding="@dimen/padding_med" />
+    </LinearLayout>
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/text_message_list" />
+        android:layout_below="@id/title_list" />
 
     <ProgressBar
         android:id="@+id/progress_list"
