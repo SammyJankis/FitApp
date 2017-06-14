@@ -36,6 +36,7 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
     }
 
     private void queryFitnessDataForToday(DataType dataType) {
+        subscribeToFitnessData(dataType);
         Fitness.HistoryApi.readDailyTotal(googleApiClient, dataType).setResultCallback(
                 new ResultCallback<DailyTotalResult>() {
                     @Override
@@ -49,6 +50,17 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
                     }
                 }
         );
+    }
+
+    private void subscribeToFitnessData(DataType dataType) {
+        Fitness.RecordingApi.subscribe(googleApiClient, dataType)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        if (!status.isSuccess())
+                            view.requestPermissions(status);
+                    }
+                });
     }
 
     @Override
