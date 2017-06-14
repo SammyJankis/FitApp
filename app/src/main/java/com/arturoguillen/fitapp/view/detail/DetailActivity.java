@@ -9,6 +9,8 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import com.arturoguillen.fitapp.R;
 import com.arturoguillen.fitapp.di.component.FitComponent;
@@ -20,7 +22,6 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.data.DataPoint;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.result.DailyTotalResult;
@@ -30,6 +31,7 @@ import java.util.List;
 
 import javax.inject.Inject;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
 
 /**
@@ -52,6 +54,21 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
 
     @Inject
     DetailFitPresenter presenter;
+
+    @BindView(R.id.progress_detail)
+    ProgressBar progressDetail;
+
+    @BindView(R.id.description_detail)
+    TextView descriptionDetail;
+
+    @BindView(R.id.title_detail)
+    TextView titleDetail;
+
+    @BindView(R.id.more_info_detail)
+    TextView moreInfoDetail;
+
+    @BindView(R.id.type_detail)
+    TextView typeDetail;
 
     @Override
     public String getTag() {
@@ -84,6 +101,20 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
         goal = getGoalExtra(savedInstanceState);
+
+        initUI();
+    }
+
+    private void initUI() {
+        titleDetail.setText(goal.getTitle());
+        descriptionDetail.setText(goal.getDescription());
+        typeDetail.setText(getTypeString());
+    }
+
+    private int getTypeString() {
+        if (goal.isDataTypeDistance())
+            return R.string.meters;
+        return R.string.steps;
     }
 
     private Goal getGoalExtra(Bundle savedInstanceState) {

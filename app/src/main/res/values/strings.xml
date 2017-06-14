@@ -9,4 +9,6 @@
     <string name="change_permissions_in_settings">You can change your permissions in Settings, but until then, we can\'t continue</string>
     <string name="go_to_settings">Go to Settings</string>
     <string name="hi_there">Hi there !!\nWelcome to FitApp, select one of our goals from this list to start having fun</string>
+    <string name="meters">Meters</string>
+    <string name="steps">Steps</string>
 </resources>
