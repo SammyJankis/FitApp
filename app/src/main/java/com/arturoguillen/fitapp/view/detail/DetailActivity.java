@@ -17,6 +17,7 @@ import com.arturoguillen.fitapp.presenter.DetailFitPresenter;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.PermissionsActivity;
 import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.DataPoint;
@@ -41,6 +42,7 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
 
     private static final String TAG = DetailActivity.class.getSimpleName();
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
+    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
     private static final String EXTRA_GOAL = "EXTRA_GOAL";
 
     private Goal goal;
@@ -117,7 +119,8 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     private void registerGoogleApiClientCallbacks() {
-        if (googleApiClient != null &&
+
+        if (checkPlayServices() && googleApiClient != null &&
                 !googleApiClient.isConnectionCallbacksRegistered(this) &&
                 !googleApiClient.isConnectionFailedListenerRegistered(this)) {
             googleApiClient.registerConnectionCallbacks(this);
@@ -169,6 +172,18 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
         LogUtils.DEBUG(TAG, "onConnectionFailed");
+    }
+
+    private boolean checkPlayServices() {
+        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
+        int result = googleAPI.isGooglePlayServicesAvailable(this);
+        if (result != ConnectionResult.SUCCESS) {
+            if (googleAPI.isUserResolvableError(result)) {
+                googleAPI.getErrorDialog(this, result, PLAY_SERVICES_RESOLUTION_REQUEST).show();
+            }
+            return false;
+        }
+        return true;
     }
 
     @Override
