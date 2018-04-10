@@ -2,12 +2,10 @@ package com.arturoguillen.fitapp.view.detail;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentSender;
-import android.location.Location;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -19,9 +17,6 @@ import com.arturoguillen.fitapp.entities.Goal;
 import com.arturoguillen.fitapp.presenter.DetailFitPresenter;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.PermissionsActivity;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.GoogleApiAvailability;
-import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.Field;
@@ -33,23 +28,17 @@ import javax.inject.Inject;
  * Created by agl on 11/06/2017.
  */
 
-public class DetailActivity extends PermissionsActivity implements GoogleApiClient.ConnectionCallbacks,
-        GoogleApiClient.OnConnectionFailedListener,
+public class DetailActivity extends PermissionsActivity implements
         DetailGoalView {
 
     private static final String TAG = DetailActivity.class.getSimpleName();
 
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
 
-    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
-
     private static final String EXTRA_GOAL = "EXTRA_GOAL";
 
     @BindView(R.id.description_detail)
     TextView descriptionDetail;
-
-    @Inject
-    GoogleApiClient googleApiClient;
 
     @BindView(R.id.more_info_detail)
     TextView moreInfoDetail;
@@ -90,22 +79,25 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         if (requestCode == REQUEST_CODE_RESOLVE_ERR) {
             if (resultCode == RESULT_OK) {
                 LogUtils.DEBUG(TAG, "Successfully subscribed!");
-            } else if (!googleApiClient.isConnecting() && googleApiClient.isConnected()) {
-                showErrorDialog(new Runnable() {
-                    @Override
-                    public void run() {
-                        dispatchGoal();
-                    }
-                });
+            } else {
+                presenter.onSubscriptionToGoogleFitFailed();
             }
         }
     }
 
     @Override
     protected void onDestroy() {
-        unregisterGoogleApiClientCallbacks();
         presenter.detachView();
         super.onDestroy();
+    }
+
+    @Override
+    public void dispatchGoal() {
+        if (goal.isDataTypeDistance()) {
+            presenter.queryDistanceData();
+        } else if (goal.isDataTypeStep()) {
+            presenter.queryStepData();
+        }
     }
 
     @Override
@@ -114,41 +106,12 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        LogUtils.DEBUG(TAG, "Connected");
-        dispatchGoal();
-    }
-
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        LogUtils.DEBUG(TAG, "onConnectionFailed");
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
-            LogUtils.DEBUG(TAG, "Connection lost.  Cause: Network Lost.");
-        } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
-            LogUtils.DEBUG(TAG, "Connection lost.  Reason: Service Disconnected");
-        }
-    }
-
-    @Override
     public void onLocationPermissionGranted() {
         super.onLocationPermissionGranted();
         LogUtils.DEBUG(TAG, "Location Permission Granted");
-        registerGoogleApiClientCallbacks();
-    }
-
-    @Override
-    public void requestPermissions(Status status) {
-        LogUtils.DEBUG(TAG, "There was a problem subscribing.");
-        if (status.hasResolution()) {
-            try {
-                status.startResolutionForResult(DetailActivity.this, REQUEST_CODE_RESOLVE_ERR);
-            } catch (IntentSender.SendIntentException e) {
-                LogUtils.DEBUG(TAG, e.getMessage());
-            }
+        if (checkPlayServices()) {
+            LogUtils.DEBUG(TAG, "Google Play Services active");
+            presenter.registerGoogleApiClientCallbacks();
         }
     }
 
@@ -169,33 +132,27 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     @Override
-    public void unRegister() {
-        unregisterGoogleApiClientCallbacks();
+    public void showErrorWhenSubscriptionFails() {
+        showErrorDialog(new OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialogInterface, final int i) {
+                dispatchGoal();
+            }
+        });
+    }
+
+    @Override
+    public void startResolutionSubscribingToGoogleFitApi(final Status status) {
+        try {
+            status.startResolutionForResult(DetailActivity.this, REQUEST_CODE_RESOLVE_ERR);
+        } catch (IntentSender.SendIntentException e) {
+            LogUtils.DEBUG(TAG, e.getMessage());
+        }
     }
 
     @Override
     protected void injectComponent(FitComponent component) {
         component.inject(this);
-    }
-
-    private boolean checkPlayServices() {
-        GoogleApiAvailability googleAPI = GoogleApiAvailability.getInstance();
-        int result = googleAPI.isGooglePlayServicesAvailable(this);
-        if (result != ConnectionResult.SUCCESS) {
-            if (googleAPI.isUserResolvableError(result)) {
-                googleAPI.getErrorDialog(this, result, PLAY_SERVICES_RESOLUTION_REQUEST).show();
-            }
-            return false;
-        }
-        return true;
-    }
-
-    private void dispatchGoal() {
-        if (goal.isDataTypeDistance()) {
-            presenter.queryDistanceData();
-        } else if (goal.isDataTypeStep()) {
-            presenter.queryStepData();
-        }
     }
 
     private int getDetailTypeText() {
@@ -226,27 +183,12 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         typeDetail.setText(getDetailTypeText());
     }
 
-    private void registerGoogleApiClientCallbacks() {
-
-        if (checkPlayServices() && googleApiClient != null &&
-                !googleApiClient.isConnectionCallbacksRegistered(this) &&
-                !googleApiClient.isConnectionFailedListenerRegistered(this)) {
-            googleApiClient.registerConnectionCallbacks(this);
-            googleApiClient.registerConnectionFailedListener(this);
-            googleApiClient.connect(GoogleApiClient.SIGN_IN_MODE_OPTIONAL);
-        }
-    }
-
-    private void showErrorDialog(final Runnable ok) {
+    private void showErrorDialog(DialogInterface.OnClickListener onClickListener) {
         AlertDialog.Builder adb = new AlertDialog.Builder(this);
         adb.setTitle(getString(R.string.app_name));
         adb.setMessage(R.string.should_accept_permissions);
         adb.setIcon(android.R.drawable.ic_dialog_alert);
-        adb.setPositiveButton(R.string.try_again, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                ok.run();
-            }
-        });
+        adb.setPositiveButton(R.string.try_again, onClickListener);
         adb.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int which) {
                 finish();
@@ -266,19 +208,5 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
             text = getString(R.string.keep_pushing, total);
         }
         moreInfoDetail.setText(text);
-    }
-
-    private void unregisterGoogleApiClientCallbacks() {
-        if (googleApiClient.isConnected()) {
-            googleApiClient.disconnect();
-        }
-
-        if (googleApiClient.isConnectionCallbacksRegistered(this)) {
-            googleApiClient.unregisterConnectionCallbacks(this);
-        }
-
-        if (googleApiClient.isConnectionFailedListenerRegistered(this)) {
-            googleApiClient.unregisterConnectionFailedListener(this);
-        }
     }
 }

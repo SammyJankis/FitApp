@@ -10,10 +10,12 @@ import com.google.android.gms.fitness.result.DailyTotalResult;
 
 public interface DetailGoalView {
 
-    void requestPermissions(Status status);
+    void dispatchGoal();
 
     void showData(DailyTotalResult dailyTotalResult, Field field);
 
-    void unRegister();
+    void showErrorWhenSubscriptionFails();
+
+    void startResolutionSubscribingToGoogleFitApi(Status status);
 
 }
