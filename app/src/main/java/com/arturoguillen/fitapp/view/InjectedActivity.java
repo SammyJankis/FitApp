@@ -10,7 +10,7 @@ import com.arturoguillen.fitapp.di.component.FitComponent;
  * Created by agl on 12/06/2017.
  */
 
-public abstract class InjectedActivity extends AppCompatActivity {
+public abstract class InjectedActivity extends BaseActivity  {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

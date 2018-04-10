@@ -1,67 +1,40 @@
 package com.arturoguillen.fitapp.presenter;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
-
+import android.support.annotation.Nullable;
+import com.arturoguillen.fitapp.R;
+import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.detail.DetailGoalView;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.result.DailyTotalResult;
-
 import javax.inject.Inject;
 
 /**
  * Created by agl on 13/06/2017.
  */
 
-public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
+public class DetailFitPresenter implements PresenterInterface<DetailGoalView>, GoogleApiClient.ConnectionCallbacks,
+        GoogleApiClient.OnConnectionFailedListener {
 
-    private GoogleApiClient googleApiClient;
+    private static final String TAG = DetailFitPresenter.class.getSimpleName();
+
+    @Inject
+    GoogleApiClient googleApiClient;
 
     private DetailGoalView view;
 
     @Inject
     public DetailFitPresenter(GoogleApiClient googleApiClient) {
         this.googleApiClient = googleApiClient;
-    }
-
-    public void queryStepData() {
-        queryFitnessDataForToday(DataType.TYPE_STEP_COUNT_DELTA, Field.FIELD_STEPS);
-    }
-
-    public void queryDistanceData() {
-        queryFitnessDataForToday(DataType.TYPE_DISTANCE_DELTA, Field.FIELD_DISTANCE);
-    }
-
-    private void queryFitnessDataForToday(DataType dataType, final Field field) {
-        subscribeToFitnessData(dataType);
-        Fitness.HistoryApi.readDailyTotal(googleApiClient, dataType).setResultCallback(
-                new ResultCallback<DailyTotalResult>() {
-                    @Override
-                    public void onResult(@NonNull DailyTotalResult dailyTotalResult) {
-                        Status status = dailyTotalResult.getStatus();
-                        if (status.isSuccess()) {
-                            view.showData(dailyTotalResult, field);
-                        } else {
-                            view.requestPermissions(status);
-                        }
-                    }
-                }
-        );
-    }
-
-    private void subscribeToFitnessData(DataType dataType) {
-        Fitness.RecordingApi.subscribe(googleApiClient, dataType)
-                .setResultCallback(new ResultCallback<Status>() {
-                    @Override
-                    public void onResult(Status status) {
-                        if (!status.isSuccess())
-                            view.requestPermissions(status);
-                    }
-                });
     }
 
     @Override
@@ -71,7 +44,130 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView> {
 
     @Override
     public void detachView() {
-        view.unRegister();
+        unregisterGoogleApiClientCallbacks();
         this.view = null;
+    }
+
+    public void getMoreInfoMessage(final int total, final int limit) {
+        int percent = 100 * total / limit;
+        if (percent < 33) {
+            view.showMoreInfo(R.string.come_on, total);
+        } else if (percent > 33 && percent < 66) {
+            view.showMoreInfo(R.string.doing_great, total);
+        } else {
+            view.showMoreInfo(R.string.keep_pushing, total);
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable final Bundle bundle) {
+        LogUtils.DEBUG(TAG, "Connected");
+        view.dispatchGoal();
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull final ConnectionResult connectionResult) {
+        LogUtils.DEBUG(TAG, "onConnectionFailed");
+    }
+
+    @Override
+    public void onConnectionSuspended(final int i) {
+        if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_NETWORK_LOST) {
+            LogUtils.DEBUG(TAG, "Connection lost.  Cause: Network Lost.");
+        } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
+            LogUtils.DEBUG(TAG, "Connection lost.  Reason: Service Disconnected");
+        }
+    }
+
+    public void onSubscriptionToGoogleFitFailed() {
+        if (!googleApiClient.isConnecting() && googleApiClient.isConnected()) {
+            view.showErrorWhenSubscriptionFails();
+        }
+    }
+
+    public void queryDistanceData() {
+        LogUtils.DEBUG(TAG, "Querying distance data");
+        queryFitnessDataForToday(DataType.TYPE_DISTANCE_DELTA, Field.FIELD_DISTANCE);
+    }
+
+    public void queryStepData() {
+        LogUtils.DEBUG(TAG, "Querying step data");
+        queryFitnessDataForToday(DataType.TYPE_STEP_COUNT_DELTA, Field.FIELD_STEPS);
+    }
+
+    public void registerGoogleApiClientCallbacks() {
+        if (googleApiClient != null &&
+                !googleApiClient.isConnectionCallbacksRegistered(this) &&
+                !googleApiClient.isConnectionFailedListenerRegistered(this)) {
+            googleApiClient.registerConnectionCallbacks(this);
+            googleApiClient.registerConnectionFailedListener(this);
+            googleApiClient.connect(GoogleApiClient.SIGN_IN_MODE_OPTIONAL);
+        }
+    }
+
+    private int getTotal(DailyTotalResult dailyTotalResult, Field field,
+            final DataType dataType) {
+        int total = 0;
+        DataSet totalSet = dailyTotalResult.getTotal();
+        Value totalValue = totalSet.isEmpty() ? null : totalSet.getDataPoints().get(0).getValue(field);
+        if (totalValue != null) {
+            if (dataType.equals(DataType.TYPE_STEP_COUNT_DELTA)) {
+                total = totalValue.asInt();
+            } else if (dataType.equals(DataType.TYPE_DISTANCE_DELTA)) {
+                total = (int) totalValue.asFloat();
+            }
+        }
+        LogUtils.DEBUG(TAG, "Total value = " + total);
+        return total;
+    }
+
+    private void queryFitnessDataForToday(final DataType dataType, final Field field) {
+        Fitness.HistoryApi.readDailyTotal(googleApiClient, dataType).setResultCallback(
+                new ResultCallback<DailyTotalResult>() {
+                    @Override
+                    public void onResult(@NonNull DailyTotalResult dailyTotalResult) {
+                        Status status = dailyTotalResult.getStatus();
+                        if (status.isSuccess()) {
+                            view.showData(getTotal(dailyTotalResult, field, dataType));
+                            subscribeToFitnessData(dataType);
+                        } else {
+                            requestPermissions(status);
+                        }
+                    }
+                }
+        );
+    }
+
+    private void requestPermissions(Status status) {
+        LogUtils.DEBUG(TAG, "There was a problem subscribing");
+        if (status.hasResolution()) {
+            view.startResolutionSubscribingToGoogleFitApi(status);
+        }
+    }
+
+    private void subscribeToFitnessData(DataType dataType) {
+        Fitness.RecordingApi.subscribe(googleApiClient, dataType)
+                .setResultCallback(new ResultCallback<Status>() {
+                    @Override
+                    public void onResult(Status status) {
+                        if (!status.isSuccess()) {
+                            requestPermissions(status);
+                        }
+                    }
+                });
+    }
+
+    private void unregisterGoogleApiClientCallbacks() {
+        if (googleApiClient.isConnected()) {
+            googleApiClient.disconnect();
+        }
+
+        if (googleApiClient.isConnectionCallbacksRegistered(this)) {
+            googleApiClient.unregisterConnectionCallbacks(this);
+        }
+
+        if (googleApiClient.isConnectionFailedListenerRegistered(this)) {
+            googleApiClient.unregisterConnectionFailedListener(this);
+        }
     }
 }
