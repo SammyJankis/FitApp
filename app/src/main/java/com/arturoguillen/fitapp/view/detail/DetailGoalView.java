@@ -9,9 +9,10 @@ import com.google.android.gms.fitness.result.DailyTotalResult;
  */
 
 public interface DetailGoalView {
-    void showData(DailyTotalResult dailyTotalResult, Field field);
 
     void requestPermissions(Status status);
+
+    void showData(DailyTotalResult dailyTotalResult, Field field);
 
     void unRegister();
 
