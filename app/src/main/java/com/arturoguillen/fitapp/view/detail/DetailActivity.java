@@ -1,10 +1,10 @@
 package com.arturoguillen.fitapp.view.detail;
 
-import android.Manifest;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentSender;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -27,8 +27,6 @@ import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.Field;
 import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.result.DailyTotalResult;
-import java.util.ArrayList;
-import java.util.List;
 import javax.inject.Inject;
 
 /**
@@ -83,14 +81,8 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
 
         ButterKnife.bind(this);
         goal = getGoalExtra(savedInstanceState);
-
         initUI();
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        registerGoogleApiClientCallbacks();
+        requestLocationPermission();
     }
 
     @Override
@@ -110,43 +102,15 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
-        unregisterGoogleApiClientCallbacks();
-    }
-
-    @Override
     protected void onDestroy() {
+        unregisterGoogleApiClientCallbacks();
         presenter.detachView();
         super.onDestroy();
     }
 
     @Override
-    public Runnable getCallbackOnPermissionsGranted() {
-        return new Runnable() {
-            @Override
-            public void run() {
-                LogUtils.DEBUG(TAG, "Permissions Granted");
-                registerGoogleApiClientCallbacks();
-            }
-        };
-    }
-
-    @Override
     public int getLayout() {
         return R.layout.activity_detail;
-    }
-
-    @Override
-    public List<String> getPermissionsToGrant() {
-        List<String> permissionsToRequest = new ArrayList<>();
-        permissionsToRequest.add(Manifest.permission.ACCESS_FINE_LOCATION);
-        return permissionsToRequest;
-    }
-
-    @Override
-    public String getTag() {
-        return TAG;
     }
 
     @Override
@@ -167,6 +131,12 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         } else if (i == GoogleApiClient.ConnectionCallbacks.CAUSE_SERVICE_DISCONNECTED) {
             LogUtils.DEBUG(TAG, "Connection lost.  Reason: Service Disconnected");
         }
+    }
+
+    @Override
+    public void onLocationObtained(final Location location) {
+        LogUtils.DEBUG(TAG, "Location Permission Granted");
+        registerGoogleApiClientCallbacks();
     }
 
     @Override
