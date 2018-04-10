@@ -35,10 +35,10 @@ public abstract class PermissionsActivity extends InjectedActivity {
                     @Override
                     public void onClick(final DialogInterface dialogInterface, final int i) {
                         startActivity(createGoToSettingsIntent());
-
+                        finish();
                     }
 
-                }, R.string.go_to_settings, R.string.change_permissions_in_settings);
+                }, R.string.change_permissions_in_settings, R.string.go_to_settings);
             }
         }
     }
