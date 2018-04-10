@@ -134,7 +134,8 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     }
 
     @Override
-    public void onLocationObtained(final Location location) {
+    public void onLocationPermissionGranted() {
+        super.onLocationPermissionGranted();
         LogUtils.DEBUG(TAG, "Location Permission Granted");
         registerGoogleApiClientCallbacks();
     }
