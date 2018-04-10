@@ -31,6 +31,11 @@ import javax.inject.Inject;
 public class DetailActivity extends PermissionsActivity implements
         DetailGoalView {
 
+    /*TODO : It is mandatory to insert the SHA fingerprint in the console.developers.google.com/apis
+        If you don't do that, the sign in always will respond with a failure
+        Obtain SHA in  -> keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android
+    */
+
     private static final String TAG = DetailActivity.class.getSimpleName();
 
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
