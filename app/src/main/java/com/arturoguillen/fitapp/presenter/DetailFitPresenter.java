@@ -3,6 +3,7 @@ package com.arturoguillen.fitapp.presenter;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.arturoguillen.fitapp.R;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.detail.DetailGoalView;
 import com.google.android.gms.common.ConnectionResult;
@@ -10,8 +11,10 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.fitness.Fitness;
+import com.google.android.gms.fitness.data.DataSet;
 import com.google.android.gms.fitness.data.DataType;
 import com.google.android.gms.fitness.data.Field;
+import com.google.android.gms.fitness.data.Value;
 import com.google.android.gms.fitness.result.DailyTotalResult;
 import javax.inject.Inject;
 
@@ -43,6 +46,17 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView>, G
     public void detachView() {
         unregisterGoogleApiClientCallbacks();
         this.view = null;
+    }
+
+    public void getMoreInfoMessage(final int total, final int limit) {
+        int percent = 100 * total / limit;
+        if (percent < 33) {
+            view.showMoreInfo(R.string.come_on, total);
+        } else if (percent > 33 && percent < 66) {
+            view.showMoreInfo(R.string.doing_great, total);
+        } else {
+            view.showMoreInfo(R.string.keep_pushing, total);
+        }
     }
 
     @Override
@@ -91,6 +105,22 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView>, G
         }
     }
 
+    private int getTotal(DailyTotalResult dailyTotalResult, Field field,
+            final DataType dataType) {
+        int total = 0;
+        DataSet totalSet = dailyTotalResult.getTotal();
+        Value totalValue = totalSet.isEmpty() ? null : totalSet.getDataPoints().get(0).getValue(field);
+        if (totalValue != null) {
+            if (dataType.equals(DataType.TYPE_STEP_COUNT_DELTA)) {
+                total = totalValue.asInt();
+            } else if (dataType.equals(DataType.TYPE_DISTANCE_DELTA)) {
+                total = (int) totalValue.asFloat();
+            }
+        }
+        LogUtils.DEBUG(TAG, "Total value = " + total);
+        return total;
+    }
+
     private void queryFitnessDataForToday(final DataType dataType, final Field field) {
         Fitness.HistoryApi.readDailyTotal(googleApiClient, dataType).setResultCallback(
                 new ResultCallback<DailyTotalResult>() {
@@ -98,7 +128,7 @@ public class DetailFitPresenter implements PresenterInterface<DetailGoalView>, G
                     public void onResult(@NonNull DailyTotalResult dailyTotalResult) {
                         Status status = dailyTotalResult.getStatus();
                         if (status.isSuccess()) {
-                            view.showData(dailyTotalResult, field);
+                            view.showData(getTotal(dailyTotalResult, field, dataType));
                             subscribeToFitnessData(dataType);
                         } else {
                             requestPermissions(status);

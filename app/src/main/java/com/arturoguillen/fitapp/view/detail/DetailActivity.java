@@ -2,7 +2,6 @@ package com.arturoguillen.fitapp.view.detail;
 
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -18,10 +17,6 @@ import com.arturoguillen.fitapp.presenter.DetailFitPresenter;
 import com.arturoguillen.fitapp.utils.LogUtils;
 import com.arturoguillen.fitapp.view.PermissionsActivity;
 import com.google.android.gms.common.api.Status;
-import com.google.android.gms.fitness.data.DataSet;
-import com.google.android.gms.fitness.data.Field;
-import com.google.android.gms.fitness.data.Value;
-import com.google.android.gms.fitness.result.DailyTotalResult;
 import javax.inject.Inject;
 
 /**
@@ -121,29 +116,24 @@ public class DetailActivity extends PermissionsActivity implements
     }
 
     @Override
-    public void showData(DailyTotalResult dailyTotalResult, Field field) {
-        DataSet totalSet = dailyTotalResult.getTotal();
-        progressDetail.setMax(goal.getLimit());
-        Value totalValue = totalSet.isEmpty() ? null : totalSet.getDataPoints().get(0).getValue(field);
-        int total;
-        if (goal.isDataTypeStep()) {
-            total = totalValue.asInt();
-        } else {
-            total = (int) totalValue.asFloat();
-        }
-        LogUtils.DEBUG(TAG, "Total value = " + total);
+    public void showData(int total) {
         progressDetail.setProgress(total);
-        showMoreInfo(total);
+        presenter.getMoreInfoMessage(total, goal.getLimit());
     }
 
     @Override
     public void showErrorWhenSubscriptionFails() {
-        showErrorDialog(new OnClickListener() {
+        showErrorDialog(new DialogInterface.OnClickListener() {
             @Override
             public void onClick(final DialogInterface dialogInterface, final int i) {
                 dispatchGoal();
             }
         });
+    }
+
+    @Override
+    public void showMoreInfo(int messageId, int total) {
+        moreInfoDetail.setText(getString(messageId, total));
     }
 
     @Override
@@ -186,6 +176,7 @@ public class DetailActivity extends PermissionsActivity implements
         titleDetail.setText(goal.getTitle());
         descriptionDetail.setText(goal.getDescription());
         typeDetail.setText(getDetailTypeText());
+        progressDetail.setMax(goal.getLimit());
     }
 
     private void showErrorDialog(DialogInterface.OnClickListener onClickListener) {
@@ -200,18 +191,5 @@ public class DetailActivity extends PermissionsActivity implements
             }
         });
         adb.show();
-    }
-
-    private void showMoreInfo(int total) {
-        int percent = 100 * total / goal.getLimit();
-        String text;
-        if (percent < 33) {
-            text = getString(R.string.come_on, total);
-        } else if (percent > 33 && percent < 66) {
-            text = getString(R.string.doing_great, total);
-        } else {
-            text = getString(R.string.keep_pushing, total);
-        }
-        moreInfoDetail.setText(text);
     }
 }
