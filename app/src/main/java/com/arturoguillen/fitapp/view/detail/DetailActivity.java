@@ -109,10 +109,10 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
     private void initUI() {
         titleDetail.setText(goal.getTitle());
         descriptionDetail.setText(goal.getDescription());
-        typeDetail.setText(getTypeString());
+        typeDetail.setText(getDetailTypeText());
     }
 
-    private int getTypeString() {
+    private int getDetailTypeText() {
         if (goal.isDataTypeDistance())
             return R.string.meters;
         return R.string.steps;
