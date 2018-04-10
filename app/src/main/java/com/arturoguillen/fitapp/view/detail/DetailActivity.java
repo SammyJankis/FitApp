@@ -81,7 +81,6 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         super.onCreate(savedInstanceState);
         presenter.attachView(this);
 
-        setContentView(R.layout.activity_detail);
         ButterKnife.bind(this);
         goal = getGoalExtra(savedInstanceState);
 
@@ -133,6 +132,11 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
                 registerGoogleApiClientCallbacks();
             }
         };
+    }
+
+    @Override
+    public int getLayout() {
+        return R.layout.activity_detail;
     }
 
     @Override
