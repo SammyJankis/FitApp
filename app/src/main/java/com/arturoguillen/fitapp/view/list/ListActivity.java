@@ -34,9 +34,6 @@ public class ListActivity extends InjectedActivity implements GoalListView, List
     @Inject
     GoalsPresenter presenter;
 
-    @Inject
-    GoogleApiClient googleApiClient;
-
     @BindView(R.id.recyclerview_list)
     RecyclerView recyclerView;
 
