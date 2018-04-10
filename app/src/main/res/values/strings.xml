@@ -14,5 +14,6 @@
     <string name="come_on">Come on, you have to focus. You\'ve only done %d</string>
     <string name="doing_great">You are doing great. You\'ve done %d</string>
     <string name="keep_pushing">Keep pushing. That\'s almost done. You\'ve done %d</string>
+    <string name="necessary_accept_permissions">It is necessary that you accept these permissions to have fun with our app !!</string>
 
 </resources>
