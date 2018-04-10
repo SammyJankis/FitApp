@@ -43,7 +43,7 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
 
     private static int REQUEST_CODE_RESOLVE_ERR = 1000;
 
-    private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
+    private static final int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     private static final String EXTRA_GOAL = "EXTRA_GOAL";
 
@@ -98,15 +98,13 @@ public class DetailActivity extends PermissionsActivity implements GoogleApiClie
         if (requestCode == REQUEST_CODE_RESOLVE_ERR) {
             if (resultCode == RESULT_OK) {
                 LogUtils.DEBUG(TAG, "Successfully subscribed!");
-            } else if (resultCode != RESULT_OK) {
-                if (!googleApiClient.isConnecting() && googleApiClient.isConnected()) {
-                    showErrorDialog(new Runnable() {
-                        @Override
-                        public void run() {
-                            dispatchGoal();
-                        }
-                    });
-                }
+            } else if (!googleApiClient.isConnecting() && googleApiClient.isConnected()) {
+                showErrorDialog(new Runnable() {
+                    @Override
+                    public void run() {
+                        dispatchGoal();
+                    }
+                });
             }
         }
     }
