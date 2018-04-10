@@ -105,8 +105,7 @@ public class ListActivity extends InjectedActivity implements GoalListView, List
 
     @Override
     public void showMoreData(List<Goal> goals) {
-        GoalAdapter adapter = (GoalAdapter) recyclerView.getAdapter();
-        adapter.appendFeedContent(goals);
+        ((GoalAdapter)recyclerView.getAdapter()).appendFeedContent(goals);
     }
 
     @Override
